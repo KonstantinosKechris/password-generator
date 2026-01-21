@@ -1,35 +1,159 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Slider from "@mui/material/Slider";
+import { red } from "@mui/material/colors";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [Password, setPassWord] = useState("kotsos");
+  const [passwordLength, setPasswordLength] = useState(0);
+  const [containUppercase, setContainUppercase] = useState(false);
+  const [containLowercase, setContainLowercase] = useState(false);
+  const [containNumbers, setContainNumbers] = useState(false);
+  const [containSymbols, setContainSymbols] = useState(false);
+
+  const availableChars =
+    (containUppercase ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "") +
+    (containLowercase ? "abcdefghijklmnopqrstuvwxyz" : "") +
+    (containNumbers ? "0123456789" : "") +
+    (containSymbols ? "~!@#$%^&*" : "");
+
+  const maxPasswordLength = availableChars.length;
+
+  const OnGeneratePasswordClicked = () => {
+    if (!availableChars) return;
+
+    let password = "";
+    for (let i = 0; i < passwordLength; i++) {
+      const index = Math.floor(Math.random() * availableChars.length);
+      password += availableChars[index];
+    }
+    setPassWord(password);
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="main-container">
+        <h2 className="heading">Password Generator</h2>
+
+        <div className="password-section">
+          <p>{Password}</p>
+          <div>
+            <ContentCopyIcon className="copy-icon" />
+          </div>
+        </div>
+
+        <div className="password-specs-section">
+          <div>
+            <div className="character-length-wrapper">
+              <p className="character-length-text">Character Length</p>
+              <p className="character-length">{passwordLength}</p>
+            </div>
+            <Slider
+              min={6}
+              max={18}
+              step={1}
+              value={passwordLength}
+              onChange={(e, newValue) => setPasswordLength(newValue)}
+              sx={{
+                color: "#18171F",
+              }}
+            />
+          </div>
+
+          <div className="checkbox-container">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={containUppercase}
+                  onChange={(e) => setContainUppercase(e.target.checked)}
+                  sx={{
+                    color: "white",
+                    "&.Mui-checked": {
+                      color: "#a4ffaf",
+                    },
+                  }}
+                />
+              }
+              label="Include Uppercase Letters"
+            />
+          </div>
+
+          <div className="checkbox-container">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={containLowercase}
+                  onChange={(e) => setContainLowercase(e.target.checked)}
+                  sx={{
+                    color: "white",
+                    "&.Mui-checked": {
+                      color: "#a4ffaf",
+                    },
+                  }}
+                />
+              }
+              label="Include Lowercase Letters"
+            />
+          </div>
+
+          <div className="checkbox-container">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={containSymbols}
+                  onChange={(e) => setContainSymbols(e.target.checked)}
+                  sx={{
+                    color: "white",
+                    "&.Mui-checked": {
+                      color: "#a4ffaf",
+                    },
+                  }}
+                />
+              }
+              label="Include Symbols"
+            />
+          </div>
+
+          <div className="checkbox-container">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={containNumbers}
+                  onChange={(e) => setContainNumbers(e.target.checked)}
+                  sx={{
+                    color: "white",
+                    "&.Mui-checked": {
+                      color: "#a4ffaf",
+                    },
+                  }}
+                />
+              }
+              label="Include Numbers"
+            />
+          </div>
+
+          <div>
+            <h2>Strength</h2>
+            <p></p>
+            <p></p>
+            <p></p>
+            <p></p>
+          </div>
+          <div>
+            <button
+              className="generate-btn"
+              onClick={OnGeneratePasswordClicked}
+            >
+              Generate
+            </button>
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
