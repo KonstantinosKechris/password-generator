@@ -6,6 +6,35 @@ body {
 .generate-btn {
   background-color: #a4ffaf;
   padding: 1em;
+  width: 100%;
+  border: 2px solid #a4ffaf;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.generate-btn:hover {
+  cursor: pointer;
+  background-color: #54535b;
+}
+
+.generate-btn:hover .generate-btn-text span {
+  color: #a4ffaf;
+}
+
+.generate-btn:hover .arrow-icon-wrapper svg {
+  fill: #a4ffaf;
+}
+
+.generate-btn-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.generate-btn-text span {
+  font-size: 16px;
+  font-weight: 600;
+  color: #24232c;
 }
 
 .heading {
@@ -14,7 +43,7 @@ body {
 }
 
 .main-container {
-  max-width: 600px;
+  max-width: 500px;
   margin: 0 auto;
 }
 
@@ -22,7 +51,7 @@ body {
   display: flex;
   align-items: center;
   gap: 1em;
-  background-color: #979797;
+  background-color: #54535b;
   justify-content: space-between;
   padding: 0.5em 1em;
 }
@@ -33,7 +62,7 @@ body {
 
 .password-specs-section {
   margin-top: 2em;
-  background-color: #979797;
+  background-color: #54535b;
   padding: 1em 1.5em;
 }
 
@@ -44,6 +73,7 @@ body {
 
 .character-length-text {
   color: white;
+  font-family: "JetBrains Mono", monospace;
 }
 
 .character-length {
@@ -56,4 +86,5 @@ body {
 
 .checkbox-container label span.MuiTypography-root {
   color: white;
+  font-family: "JetBrains Mono", monospace;
 }

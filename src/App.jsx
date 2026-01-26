@@ -1,14 +1,13 @@
 import { useState } from "react";
 import "./App.css";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Slider from "@mui/material/Slider";
-import { red } from "@mui/material/colors";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import PasswordCheckbox from "./components/PassWordCheckbox";
 
 function App() {
-  const [Password, setPassWord] = useState("kotsos");
-  const [passwordLength, setPasswordLength] = useState(0);
+  const [password, setPassWord] = useState("");
+  const [passwordLength, setPasswordLength] = useState(6);
   const [containUppercase, setContainUppercase] = useState(false);
   const [containLowercase, setContainLowercase] = useState(false);
   const [containNumbers, setContainNumbers] = useState(false);
@@ -20,18 +19,72 @@ function App() {
     (containNumbers ? "0123456789" : "") +
     (containSymbols ? "~!@#$%^&*" : "");
 
-  const maxPasswordLength = availableChars.length;
-
   const OnGeneratePasswordClicked = () => {
-    if (!availableChars) return;
-
-    let password = "";
-    for (let i = 0; i < passwordLength; i++) {
-      const index = Math.floor(Math.random() * availableChars.length);
-      password += availableChars[index];
-    }
-    setPassWord(password);
+    const newPassword = generatePassword();
+    setPassWord(newPassword);
   };
+
+  const generatePassword = () => {
+    if (!availableChars) return "";
+
+    let passwordChars = [];
+
+    if (containUppercase) {
+      passwordChars.push(
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 26)],
+      );
+    }
+    if (containLowercase) {
+      passwordChars.push(
+        "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)],
+      );
+    }
+    if (containNumbers) {
+      passwordChars.push("0123456789"[Math.floor(Math.random() * 10)]);
+    }
+    if (containSymbols) {
+      passwordChars.push("~!@#$%^&*"[Math.floor(Math.random() * 8)]);
+    }
+
+    while (passwordChars.length < passwordLength) {
+      const index = Math.floor(Math.random() * availableChars.length);
+      passwordChars.push(availableChars[index]);
+    }
+
+    for (let i = passwordChars.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [passwordChars[i], passwordChars[j]] = [
+        passwordChars[j],
+        passwordChars[i],
+      ];
+    }
+
+    return passwordChars.join("");
+  };
+
+  const calculateStrength = () => {
+    if (
+      passwordLength === 0 ||
+      (!containUppercase &&
+        !containLowercase &&
+        !containNumbers &&
+        !containSymbols)
+    ) {
+      return 0;
+    }
+
+    const lengthScore = (passwordLength / 18) * 50;
+
+    const varietyScore =
+      (containUppercase ? 12.5 : 0) +
+      (containLowercase ? 12.5 : 0) +
+      (containNumbers ? 12.5 : 0) +
+      (containSymbols ? 12.5 : 0);
+
+    return Math.min(Math.round(lengthScore + varietyScore), 100);
+  };
+
+  const strength = calculateStrength();
 
   return (
     <>
@@ -39,7 +92,9 @@ function App() {
         <h2 className="heading">Password Generator</h2>
 
         <div className="password-section">
-          <p>{Password}</p>
+          <p>
+            {password} {strength}
+          </p>
           <div>
             <ContentCopyIcon className="copy-icon" />
           </div>
@@ -63,77 +118,29 @@ function App() {
             />
           </div>
 
-          <div className="checkbox-container">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={containUppercase}
-                  onChange={(e) => setContainUppercase(e.target.checked)}
-                  sx={{
-                    color: "white",
-                    "&.Mui-checked": {
-                      color: "#a4ffaf",
-                    },
-                  }}
-                />
-              }
-              label="Include Uppercase Letters"
-            />
-          </div>
+          <PasswordCheckbox
+            label="Include Uppercase Letters"
+            checked={containUppercase}
+            onChange={(e) => setContainUppercase(e.target.checked)}
+          />
 
-          <div className="checkbox-container">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={containLowercase}
-                  onChange={(e) => setContainLowercase(e.target.checked)}
-                  sx={{
-                    color: "white",
-                    "&.Mui-checked": {
-                      color: "#a4ffaf",
-                    },
-                  }}
-                />
-              }
-              label="Include Lowercase Letters"
-            />
-          </div>
+          <PasswordCheckbox
+            label="Include Lowercase Letters"
+            checked={containLowercase}
+            onChange={(e) => setContainLowercase(e.target.checked)}
+          />
 
-          <div className="checkbox-container">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={containSymbols}
-                  onChange={(e) => setContainSymbols(e.target.checked)}
-                  sx={{
-                    color: "white",
-                    "&.Mui-checked": {
-                      color: "#a4ffaf",
-                    },
-                  }}
-                />
-              }
-              label="Include Symbols"
-            />
-          </div>
+          <PasswordCheckbox
+            label="Include Numbers"
+            checked={containNumbers}
+            onChange={(e) => setContainNumbers(e.target.checked)}
+          />
 
-          <div className="checkbox-container">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={containNumbers}
-                  onChange={(e) => setContainNumbers(e.target.checked)}
-                  sx={{
-                    color: "white",
-                    "&.Mui-checked": {
-                      color: "#a4ffaf",
-                    },
-                  }}
-                />
-              }
-              label="Include Numbers"
-            />
-          </div>
+          <PasswordCheckbox
+            label="Include Symbols"
+            checked={containSymbols}
+            onChange={(e) => setContainSymbols(e.target.checked)}
+          />
 
           <div>
             <h2>Strength</h2>
@@ -147,7 +154,12 @@ function App() {
               className="generate-btn"
               onClick={OnGeneratePasswordClicked}
             >
-              Generate
+              <div className="generate-btn-text">
+                <span>GENERATE</span>
+                <div className="arrow-icon-wrapper">
+                  <ArrowForwardIcon />
+                </div>
+              </div>
             </button>
           </div>
         </div>
