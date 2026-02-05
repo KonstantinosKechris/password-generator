@@ -4,6 +4,8 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Slider from "@mui/material/Slider";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PasswordCheckbox from "./components/PassWordCheckbox";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 function App() {
   const [password, setPassWord] = useState("");
@@ -12,6 +14,9 @@ function App() {
   const [containLowercase, setContainLowercase] = useState(false);
   const [containNumbers, setContainNumbers] = useState(false);
   const [containSymbols, setContainSymbols] = useState(false);
+  const [error, setError] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const availableChars =
     (containUppercase ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "") +
@@ -20,6 +25,18 @@ function App() {
     (containSymbols ? "~!@#$%^&*" : "");
 
   const OnGeneratePasswordClicked = () => {
+    setCopied(false);
+    if (
+      !containUppercase &&
+      !containLowercase &&
+      !containNumbers &&
+      !containSymbols
+    ) {
+      setSnackbarOpen(true);
+      setError("You have to check at least one checkbox!");
+      setPassWord("");
+      return;
+    }
     const newPassword = generatePassword();
     setPassWord(newPassword);
   };
@@ -86,17 +103,53 @@ function App() {
 
   const strength = calculateStrength();
 
+  const getStrengthConfig = () => {
+    if (strength <= 30) {
+      return { filled: 1, color: "#f64a4a" }; // κόκκινο
+    }
+    if (strength <= 50) {
+      return { filled: 2, color: "#f8cd65" }; // μουσταρδί
+    }
+    if (strength <= 75) {
+      return { filled: 3, color: "#a4ffaf" }; // ανοιχτό πράσινο
+    }
+    return { filled: 4, color: "#00c853" }; // σκούρο πράσινο
+  };
+
+  const { filled, color } = getStrengthConfig();
+
+  const handleCopy = async () => {
+    if (!password) return;
+
+    try {
+      await navigator.clipboard.writeText(password);
+      setCopied(true);
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+  };
+
   return (
     <>
       <div className="main-container">
         <h2 className="heading">Password Generator</h2>
 
         <div className="password-section">
-          <p>
-            {password} {strength}
-          </p>
-          <div>
-            <ContentCopyIcon className="copy-icon" />
+          <p>{password}</p>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              color: "#a4ffaf",
+            }}
+          >
+            {copied && <p>COPIED</p>}
+            <ContentCopyIcon
+              className="copy-icon"
+              onClick={handleCopy}
+              sx={{ cursor: "pointer" }}
+            />
           </div>
         </div>
 
@@ -119,36 +172,46 @@ function App() {
           </div>
 
           <PasswordCheckbox
-            label="Include Uppercase Letters"
+            label="Uppercase Letters"
             checked={containUppercase}
             onChange={(e) => setContainUppercase(e.target.checked)}
           />
 
           <PasswordCheckbox
-            label="Include Lowercase Letters"
+            label="Lowercase Letters"
             checked={containLowercase}
             onChange={(e) => setContainLowercase(e.target.checked)}
           />
 
           <PasswordCheckbox
-            label="Include Numbers"
+            label="Numbers"
             checked={containNumbers}
             onChange={(e) => setContainNumbers(e.target.checked)}
           />
 
           <PasswordCheckbox
-            label="Include Symbols"
+            label="Symbols"
             checked={containSymbols}
             onChange={(e) => setContainSymbols(e.target.checked)}
           />
 
-          <div>
-            <h2>Strength</h2>
-            <p></p>
-            <p></p>
-            <p></p>
-            <p></p>
+          <div className="strenght-container">
+            <h2 style={{ fontSize: "18px" }}>Strength</h2>
+
+            <div className="strength-boxes">
+              {[1, 2, 3, 4].map((box, index) => (
+                <div
+                  key={box}
+                  className="strength-box"
+                  style={{
+                    backgroundColor: index < filled ? color : "transparent",
+                    borderColor: index < filled ? color : "#e6e5ea",
+                  }}
+                />
+              ))}
+            </div>
           </div>
+
           <div>
             <button
               className="generate-btn"
@@ -164,6 +227,21 @@ function App() {
           </div>
         </div>
       </div>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </>
   );
 }
