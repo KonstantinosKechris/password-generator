@@ -1,0 +1,24 @@
+.strength-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #292737;
+  color: white;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding: 0 0.5em;
+
+  .strength-boxes {
+    display: flex;
+    gap: 8px;
+
+    .strength-box {
+      width: 10px;
+      height: 20px;
+      border: 2px solid #e6e5ea;
+      transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease;
+    }
+  }
+}

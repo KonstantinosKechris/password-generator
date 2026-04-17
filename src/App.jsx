@@ -1,11 +1,11 @@
 import { useState } from "react";
 import "./App.css";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import Slider from "@mui/material/Slider";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import PasswordCheckbox from "./components/PassWordCheckbox";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
+import PasswordCheckbox from "./components/PasswordCheckbox/PasswordCheckbox";
+import InfoMessage from "./components/InfoMessage/InfoMessage";
+import PasswordDisplay from "./components/PasswordDisplay/PasswordDisplay";
+import GeneratePasswordBtn from "./components/GeneratePasswordbtn/GeneratePasswordBtn";
+import StrengthIndicator from "./components/StrengthIndicator/StrengthIndicator";
+import PasswordLengthControl from "./components/PasswordLengthControl/PasswordLengthControl";
 
 function App() {
   const [password, setPassWord] = useState("");
@@ -14,7 +14,8 @@ function App() {
   const [containLowercase, setContainLowercase] = useState(false);
   const [containNumbers, setContainNumbers] = useState(false);
   const [containSymbols, setContainSymbols] = useState(false);
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -33,12 +34,16 @@ function App() {
       !containSymbols
     ) {
       setSnackbarOpen(true);
-      setError("You have to check at least one checkbox!");
+      setMessage("You have to check at least one checkbox!");
+      setSeverity("error");
       setPassWord("");
       return;
     }
     const newPassword = generatePassword();
     setPassWord(newPassword);
+    setMessage("Password Generated Successfully!");
+    setSeverity("success");
+    setSnackbarOpen(true);
   };
 
   const generatePassword = () => {
@@ -134,42 +139,17 @@ function App() {
       <div className="main-container">
         <h2 className="heading">Password Generator</h2>
 
-        <div className="password-section">
-          <p>{password}</p>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              color: "#a4ffaf",
-            }}
-          >
-            {copied && <p>COPIED</p>}
-            <ContentCopyIcon
-              className="copy-icon"
-              onClick={handleCopy}
-              sx={{ cursor: "pointer" }}
-            />
-          </div>
-        </div>
+        <PasswordDisplay
+          password={password}
+          copied={copied}
+          handleCopy={handleCopy}
+        />
 
         <div className="password-specs-section">
-          <div>
-            <div className="character-length-wrapper">
-              <p className="character-length-text">Character Length</p>
-              <p className="character-length">{passwordLength}</p>
-            </div>
-            <Slider
-              min={6}
-              max={18}
-              step={1}
-              value={passwordLength}
-              onChange={(e, newValue) => setPasswordLength(newValue)}
-              sx={{
-                color: "#18171F",
-              }}
-            />
-          </div>
+          <PasswordLengthControl
+            passwordLength={passwordLength}
+            setPasswordLength={setPasswordLength}
+          />
 
           <PasswordCheckbox
             label="Uppercase Letters"
@@ -195,53 +175,20 @@ function App() {
             onChange={(e) => setContainSymbols(e.target.checked)}
           />
 
-          <div className="strenght-container">
-            <h2 style={{ fontSize: "18px" }}>Strength</h2>
+          <StrengthIndicator filled={filled} color={color} />
 
-            <div className="strength-boxes">
-              {[1, 2, 3, 4].map((box, index) => (
-                <div
-                  key={box}
-                  className="strength-box"
-                  style={{
-                    backgroundColor: index < filled ? color : "transparent",
-                    borderColor: index < filled ? color : "#e6e5ea",
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <button
-              className="generate-btn"
-              onClick={OnGeneratePasswordClicked}
-            >
-              <div className="generate-btn-text">
-                <span>GENERATE</span>
-                <div className="arrow-icon-wrapper">
-                  <ArrowForwardIcon />
-                </div>
-              </div>
-            </button>
-          </div>
+          <GeneratePasswordBtn
+            OnGeneratePasswordClicked={OnGeneratePasswordClicked}
+          />
         </div>
       </div>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-      >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity="error"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {error}
-        </Alert>
-      </Snackbar>
+
+      <InfoMessage
+        snackbarOpen={snackbarOpen}
+        setSnackbarOpen={setSnackbarOpen}
+        message={message}
+        severity={severity}
+      />
     </>
   );
 }
