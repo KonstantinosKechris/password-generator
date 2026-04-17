@@ -1,4 +1,5 @@
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import "./GeneratePasswordBtn.scss";
 
 function GeneratePasswordBtn({ OnGeneratePasswordClicked }) {
   return (

@@ -1,4 +1,5 @@
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import "./PasswordDisplay.scss";
 
 function PasswordDisplay({ password, copied, handleCopy }) {
   return (

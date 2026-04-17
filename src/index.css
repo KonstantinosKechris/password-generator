@@ -3,43 +3,20 @@ body {
   font-family: "JetBrains Mono", monospace;
 }
 
-.generate-btn {
-  background-color: #a4ffaf;
-  padding: 1em;
-  width: 100%;
-  border: 2px solid #a4ffaf;
-  font-family: "JetBrains Mono", monospace;
-}
-
-.generate-btn:hover {
-  cursor: pointer;
-  background-color: #54535b;
-}
-
-.generate-btn:hover .generate-btn-text span {
-  color: #a4ffaf;
-}
-
-.generate-btn:hover .arrow-icon-wrapper svg {
-  fill: #a4ffaf;
-}
-
-.generate-btn-text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-}
-
-.generate-btn-text span {
-  font-size: 16px;
-  font-weight: 600;
-  color: #24232c;
-}
-
 .heading {
   color: #817d92;
   font-size: 24px;
+}
+
+@media (max-width: 576px) {
+  .heading {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+  }
+
+  .password-specs-section {
+    margin-top: 1em !important;
+  }
 }
 
 .main-container {
@@ -47,44 +24,8 @@ body {
   margin: 0 auto;
 }
 
-.password-section {
-  display: flex;
-  align-items: center;
-  gap: 1em;
-  background-color: #54535b;
-  justify-content: space-between;
-  padding: 0.5em 1em;
-}
-
-.copy-icon {
-  fill: #a4ffaf !important;
-}
-
 .password-specs-section {
   margin-top: 2em;
   background-color: #54535b;
   padding: 1em 1.5em;
-}
-
-.character-length-wrapper {
-  display: flex;
-  justify-content: space-between;
-}
-
-.character-length-text {
-  color: white;
-  font-family: "JetBrains Mono", monospace;
-}
-
-.character-length {
-  color: #a4ffaf;
-}
-
-.checkbox-container {
-  text-align: left;
-}
-
-.checkbox-container label span.MuiTypography-root {
-  color: white;
-  font-family: "JetBrains Mono", monospace;
 }

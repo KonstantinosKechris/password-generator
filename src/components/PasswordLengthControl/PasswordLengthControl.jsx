@@ -1,4 +1,5 @@
 import Slider from "@mui/material/Slider";
+import "./PasswordLengthControl.scss";
 
 function PasswordLengthControl({ passwordLength, setPasswordLength }) {
   return (
